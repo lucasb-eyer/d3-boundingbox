@@ -44,7 +44,8 @@ footer {
     <span>
       <p>
         <label for=cursors><input type=checkbox id=cursors checked>Use cursors</label><br>
-        <label for=M><input type=checkbox id=M checked>Allow movement</label><br>
+        <label for=x><input type=checkbox id=x checked>Allow movement in X</label><br>
+        <label for=y><input type=checkbox id=y checked>Allow movement in Y</label><br>
         <label for=w><input type=checkbox id=w checked>West</label><br>
         <label for=nw><input type=checkbox id=nw checked>North/West</label><br>
         <label for=n><input type=checkbox id=n checked>North</label><br>
@@ -53,8 +54,8 @@ footer {
         <label for=se><input type=checkbox id=se checked>South/East</label><br>
         <label for=s><input type=checkbox id=s checked>South</label><br>
         <label for=sw><input type=checkbox id=sw checked>South/West</label><br>
-        <label for=x><input type=checkbox id=x>Restrict horizontal extent</label><br>
-        <label for=y><input type=checkbox id=y>Restrict vertical extent</label><br>
+        <label for=ex><input type=checkbox id=ex>Restrict horizontal extent</label><br>
+        <label for=ey><input type=checkbox id=ey>Restrict vertical extent</label><br>
       </p><p>
         <label for=r><input type=number id=r value=3 step=1 min=0>Radius</label>
       </p><p>
@@ -113,8 +114,8 @@ rects.call myresz
   myresz.cursors this.checked
 
 # Control the allowed directions
-dirs = M: on, w: on, nw: on, n: on, ne: on, e: on, sw: on, s: on, se: on
-(d3.selectAll '#M,#w,#nw,#n,#ne,#e,#sw,#s,#se').on "change", ->
+dirs = x: on, y: on, w: on, nw: on, n: on, ne: on, e: on, sw: on, s: on, se: on
+(d3.selectAll '#x,#y,#w,#nw,#n,#ne,#e,#sw,#s,#se').on "change", ->
   dirs[this.id] = this.checked
   myresz.directions (Object.keys dirs).filter (k) -> dirs[k]
 
@@ -126,19 +127,19 @@ dirs = M: on, w: on, nw: on, n: on, ne: on, e: on, sw: on, s: on, se: on
 
 # Control the vertical limits
 d3.select("svg>g").append 'line'
-    .attr class: "y", display: "none", x1: -10, x2: W, y1: H/2, y2: H/2
+    .attr class: "ey", display: "none", x1: -10, x2: W, y1: H/2, y2: H/2
 d3.select("svg>g").append 'line'
-    .attr class: "y", display: "none", x1: -10, x2: W, y1: H/10, y2: H/10
+    .attr class: "ey", display: "none", x1: -10, x2: W, y1: H/10, y2: H/10
 d3.select("svg>g").append 'line'
-    .attr class: "x", display: "none", x1: W/3, x2: W/3, y1: -20, y2: H
+    .attr class: "ex", display: "none", x1: W/3, x2: W/3, y1: -20, y2: H
 d3.select("svg>g").append 'line'
-    .attr class: "x", display: "none", x1: W/1.2, x2: W/1.2, y1: -20, y2: H
-(d3.select '#x').on "change", ->
+    .attr class: "ex", display: "none", x1: W/1.2, x2: W/1.2, y1: -20, y2: H
+(d3.select '#ex').on "change", ->
     myresz.xextent if this.checked then [W/3, W/1.2] else false
-    (d3.selectAll 'line.x').attr display: if this.checked then "initial" else "none"
-(d3.select '#y').on "change", ->
+    (d3.selectAll 'line.ex').attr display: if this.checked then "initial" else "none"
+(d3.select '#ey').on "change", ->
     myresz.yextent if this.checked then [H/10, H/2] else false
-    (d3.selectAll 'line.y').attr display: if this.checked then "initial" else "none"
+    (d3.selectAll 'line.ey').attr display: if this.checked then "initial" else "none"
 
 # The various event counters
 inc = (id, n) ->
@@ -167,8 +168,8 @@ myresz.on "resizemove", (d, i) -> inc "resizemove"
 
 # Counters Firefox's weird checkbox cache.
 (d3.selectAll '#r').each -> this.value = 5
-(d3.selectAll '#M,#w,#nw,#n,#ne,#e,#sw,#s,#se').each -> this.checked = true
-(d3.selectAll '#x,#y').each -> this.checked = false
+(d3.selectAll '#x,#y,#w,#nw,#n,#ne,#e,#sw,#s,#se').each -> this.checked = true
+(d3.selectAll '#ex,#ey').each -> this.checked = false
     </script>
 </body>
 </html>

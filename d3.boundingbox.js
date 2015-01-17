@@ -49,9 +49,13 @@ function resizable() {
              if(xy[0] < x + handlesize.w) border += 'w'
         else if(xy[0] > x + w - handlesize.e) border += 'e'
 
-        if(border == "") border = "M"
 
-        return dirs.indexOf(border) > -1 ? border : ""
+        if(border == "" && (dirs.indexOf("x") > -1 || dirs.indexOf("y") > -1))
+            border = "M"
+        else if(dirs.indexOf(border) == -1)
+            border = ""
+
+        return border
     }
 
     function move(d, i) {
@@ -62,7 +66,14 @@ function resizable() {
             return
 
         var b = whichborder(d3.mouse(this), this)
-        document.body.style.cursor = curs[b] || null
+
+        var x = dirs.indexOf("x")
+        var y = dirs.indexOf("y")
+        // Bwahahahaha this works even when one is at index 0.
+        if(b == "M" && 1/(x*y) < 0)
+            document.body.style.cursor = x >= 0 ? curs.x : curs.y
+        else
+            document.body.style.cursor = curs[b] || null
     }
 
     function leave(d, i) {
@@ -115,9 +126,11 @@ function resizable() {
 
         // Handle moving around first, more easily.
         if(this.__resize_action__ == "M") {
-            // This is so that even moving the mouse super-fast, this still "sticks" to the extent.
-            this.setAttribute("x", clamp(clamp(d3.event.x, xextent) + this.__ow__, xextent) - this.__ow__)
-            this.setAttribute("y", clamp(clamp(d3.event.y, yextent) + this.__oh__, yextent) - this.__oh__)
+            if(dirs.indexOf("x") > -1 && d3.event.dx != 0)
+                // This is so that even moving the mouse super-fast, this still "sticks" to the extent.
+                this.setAttribute("x", clamp(clamp(d3.event.x, xextent) + this.__ow__, xextent) - this.__ow__)
+            if(dirs.indexOf("y") > -1 && d3.event.dy != 0)
+                this.setAttribute("y", clamp(clamp(d3.event.y, yextent) + this.__oh__, yextent) - this.__oh__)
         // Now check for all possible resizes.
         } else {
             var x = +this.getAttribute("x")
@@ -172,6 +185,8 @@ function resizable() {
         if(!arguments.length) return curs
         curs = _ !== true ? _ : {
             M: "move",
+            x: "col-resize",
+            y: "row-resize",
             n: "n-resize",
             e: "e-resize",
             s: "s-resize",
@@ -187,7 +202,7 @@ function resizable() {
 
     my.directions = function(_) {
         if(!arguments.length) return dirs
-        dirs = _ !== true ? _ : ["n", "e", "s", "w", "nw", "ne", "se", "sw", "M"]
+        dirs = _ !== true ? _ : ["n", "e", "s", "w", "nw", "ne", "se", "sw", "x", "y"]
         return my
     }
     my.directions(true)
