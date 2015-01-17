@@ -1,0 +1,174 @@
+<html>
+<head>
+    <style>
+body {
+    color: #585858;
+    background-color: #e8e8e8;
+}
+
+svg {
+    border: 1px solid black;
+    vertical-align: top;
+}
+
+span {
+    display: inline-block;
+}
+
+rect {
+    fill: #585858;
+    stroke: #ffa500;
+    stroke-width: 10px;
+}
+
+line {
+    stroke: red;
+}
+
+footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+
+    color: #e4e4e4;
+    background-color: #585858;
+    font-size: small;
+}
+    </style>
+</head>
+<body>
+    <svg id=labels>
+    </svg>
+
+    <span>
+      <p>
+        <label for=cursors><input type=checkbox id=cursors checked>Use cursors</label><br>
+        <label for=M><input type=checkbox id=M checked>Allow movement</label><br>
+        <label for=w><input type=checkbox id=w checked>West</label><br>
+        <label for=nw><input type=checkbox id=nw checked>North/West</label><br>
+        <label for=n><input type=checkbox id=n checked>North</label><br>
+        <label for=ne><input type=checkbox id=ne checked>North/East</label><br>
+        <label for=e><input type=checkbox id=e checked>East</label><br>
+        <label for=se><input type=checkbox id=se checked>South/East</label><br>
+        <label for=s><input type=checkbox id=s checked>South</label><br>
+        <label for=sw><input type=checkbox id=sw checked>South/West</label><br>
+        <label for=x><input type=checkbox id=x>Restrict horizontal extent</label><br>
+        <label for=y><input type=checkbox id=y>Restrict vertical extent</label><br>
+      </p><p>
+        <label for=r><input type=number id=r value=3 step=1 min=0>Radius</label>
+      </p><p>
+        <label for=dragstart><code>dragstart</code> events: <span id=dragstart>0</span></label><br>
+        <label for=dragmove><code>dragmove</code> events: <span id=dragmove>0</span></label> (<label for=dragdist>Total distance: <span id=dragdist>0</span>px</label>)<br>
+        <label for=dragend><code>dragend</code> events: <span id=dragend>0</span></label><br>
+        <label for=resizestart><code>resizestart</code> events: <span id=resizestart>0</span></label><br>
+        <label for=resizemove><code>resizemove</code> events: <span id=resizemove>0</span></label><br>
+        <label for=resizeend><code>resizeend</code> events: <span id=resizeend>0</span></label><br>
+      </p>
+    </span>
+
+    <footer>(Debug)
+      d3.mouse(): <span id=mouse></span>
+    </footer>
+
+    <!-- I fucking hotlink to master in production. -->
+    <script src=deps/d3.v3.min.js></script>
+    <script src=deps/coffee-script.js></script>
+    <script src=d3.boundingbox.js></script>
+
+    <script type="text/coffeescript">
+[W, H] = [500, 500]
+d3.select("svg").attr
+  width: W
+  height: H
+
+
+d3.select("svg").append 'g'
+  .attr transform: "translate(10,20)"
+
+rects = d3.select('g').selectAll 'rect'
+  .data [{x: 20, y: 20, w: 40, h: 40},
+         {x: 50, y: 90, w: 50, h: 60}]
+
+rects.exit().remove()
+rects.enter().append 'rect'
+
+rects.attr
+  x: (d) -> d.x
+  y: (d) -> d.y
+  width: (d) -> d.w
+  height: (d) -> d.h
+
+myresz = resizable()
+rects.call myresz
+
+(d3.select 'svg').on "mousemove", ->
+  (document.getElementById "mouse").innerHTML = d3.mouse this
+
+# The rest is for the configuration boxes.
+#######
+
+# Control the cursor change
+(d3.select '#cursors').on "change", ->
+  myresz.cursors this.checked
+
+# Control the allowed directions
+dirs = M: on, w: on, nw: on, n: on, ne: on, e: on, sw: on, s: on, se: on
+(d3.selectAll '#M,#w,#nw,#n,#ne,#e,#sw,#s,#se').on "change", ->
+  dirs[this.id] = this.checked
+  myresz.directions (Object.keys dirs).filter (k) -> dirs[k]
+
+# Control the action radius
+(d3.select '#r').on "change", ->
+  myresz.handlesize +this.value
+  d3.selectAll 'rect'
+    .style "stroke-width": "#{this.value*2}px"
+
+# Control the vertical limits
+d3.select("svg>g").append 'line'
+    .attr class: "y", display: "none", x1: -10, x2: W, y1: H/2, y2: H/2
+d3.select("svg>g").append 'line'
+    .attr class: "y", display: "none", x1: -10, x2: W, y1: H/10, y2: H/10
+d3.select("svg>g").append 'line'
+    .attr class: "x", display: "none", x1: W/3, x2: W/3, y1: -20, y2: H
+d3.select("svg>g").append 'line'
+    .attr class: "x", display: "none", x1: W/1.2, x2: W/1.2, y1: -20, y2: H
+(d3.select '#x').on "change", ->
+    myresz.xextent if this.checked then [W/3, W/1.2] else false
+    (d3.selectAll 'line.x').attr display: if this.checked then "initial" else "none"
+(d3.select '#y').on "change", ->
+    myresz.yextent if this.checked then [H/10, H/2] else false
+    (d3.selectAll 'line.y').attr display: if this.checked then "initial" else "none"
+
+# The various event counters
+inc = (id, n) ->
+  el = document.getElementById(id)
+  el.innerHTML = ((parseFloat el.innerHTML) + (n ? 1)).toFixed if n? then 1 else 0
+myresz.on "dragstart", (d, i) ->
+  inc "dragstart"
+  this._oldfill_ = this.style.fill
+  this.style.fill = '#6BD1FB'
+myresz.on "dragend", (d, i) ->
+  inc "dragend"
+  this.style.fill = this._oldfill_
+  delete this._oldfill_
+myresz.on "dragmove", (d, i) ->
+  inc "dragmove"
+  inc 'dragdist', Math.sqrt(d3.event.dx*d3.event.dx + d3.event.dy*d3.event.dy)
+myresz.on "resizestart", (d, i) ->
+  inc "resizestart"
+  this._oldstroke_ = this.style.stroke
+  this.style.stroke = '#6BD1FB'
+myresz.on "resizeend", (d, i) ->
+  inc "resizeend"
+  this.style.stroke = this._oldstroke_
+  delete this._oldstroke_
+myresz.on "resizemove", (d, i) -> inc "resizemove"
+
+# Counters Firefox's weird checkbox cache.
+(d3.selectAll '#r').each -> this.value = 5
+(d3.selectAll '#M,#w,#nw,#n,#ne,#e,#sw,#s,#se').each -> this.checked = true
+(d3.selectAll '#x,#y').each -> this.checked = false
+    </script>
+</body>
+</html>
