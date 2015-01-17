@@ -2,7 +2,12 @@
 // Licensed under the MIT License (MIT)
 // Version 1.0
 
-function resizable() {
+var root = (typeof exports !== "undefined" && exports !== null) ? exports : this
+if (!root.d3lb) {
+    root.d3lb = {}
+}
+
+root.d3lb.bbox = function () {
     // All those are initialized to default further down using the setters.
     var xextent = null
     var yextent = null
@@ -21,12 +26,12 @@ function resizable() {
     function my(selection) {
         var drag = d3.behavior.drag()
             .origin(function(d, i) { return {x: this.getAttribute("x"), y: this.getAttribute("y")}; })
-            .on("drag.resizable", dragmove)
-            .on("dragstart.resizable", dragstart)
-            .on("dragend.resizable", dragend)
+            .on("drag.lbbbox", dragmove)
+            .on("dragstart.lbbbox", dragstart)
+            .on("dragend.lbbbox", dragend)
         selection.call(drag)
-        selection.on("mousemove.resizable", move)
-        selection.on("mouseleave.resizable", leave)
+        selection.on("mousemove.lbbbox", move)
+        selection.on("mouseleave.lbbbox", leave)
 
         return selection
     }

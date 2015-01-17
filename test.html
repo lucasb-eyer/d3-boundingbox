@@ -83,7 +83,6 @@ d3.select("svg").attr
   width: W
   height: H
 
-
 d3.select("svg").append 'g'
   .attr transform: "translate(10,20)"
 
@@ -100,8 +99,8 @@ rects.attr
   width: (d) -> d.w
   height: (d) -> d.h
 
-myresz = resizable()
-rects.call myresz
+bb = d3lb.bbox()
+rects.call bb
 
 (d3.select 'svg').on "mousemove", ->
   (document.getElementById "mouse").innerHTML = d3.mouse this
@@ -111,17 +110,17 @@ rects.call myresz
 
 # Control the cursor change
 (d3.select '#cursors').on "change", ->
-  myresz.cursors this.checked
+  bb.cursors this.checked
 
 # Control the allowed directions
 dirs = x: on, y: on, w: on, nw: on, n: on, ne: on, e: on, sw: on, s: on, se: on
 (d3.selectAll '#x,#y,#w,#nw,#n,#ne,#e,#sw,#s,#se').on "change", ->
   dirs[this.id] = this.checked
-  myresz.directions (Object.keys dirs).filter (k) -> dirs[k]
+  bb.directions (Object.keys dirs).filter (k) -> dirs[k]
 
 # Control the action radius
 (d3.select '#r').on "change", ->
-  myresz.handlesize +this.value
+  bb.handlesize +this.value
   d3.selectAll 'rect'
     .style "stroke-width": "#{this.value*2}px"
 
@@ -135,36 +134,36 @@ d3.select("svg>g").append 'line'
 d3.select("svg>g").append 'line'
     .attr class: "ex", display: "none", x1: W/1.2, x2: W/1.2, y1: -20, y2: H
 (d3.select '#ex').on "change", ->
-    myresz.xextent if this.checked then [W/3, W/1.2] else false
+    bb.xextent if this.checked then [W/3, W/1.2] else false
     (d3.selectAll 'line.ex').attr display: if this.checked then "initial" else "none"
 (d3.select '#ey').on "change", ->
-    myresz.yextent if this.checked then [H/10, H/2] else false
+    bb.yextent if this.checked then [H/10, H/2] else false
     (d3.selectAll 'line.ey').attr display: if this.checked then "initial" else "none"
 
 # The various event counters
 inc = (id, n) ->
   el = document.getElementById(id)
   el.innerHTML = ((parseFloat el.innerHTML) + (n ? 1)).toFixed if n? then 1 else 0
-myresz.on "dragstart", (d, i) ->
+bb.on "dragstart", (d, i) ->
   inc "dragstart"
   this._oldfill_ = this.style.fill
   this.style.fill = '#6BD1FB'
-myresz.on "dragend", (d, i) ->
+bb.on "dragend", (d, i) ->
   inc "dragend"
   this.style.fill = this._oldfill_
   delete this._oldfill_
-myresz.on "dragmove", (d, i) ->
+bb.on "dragmove", (d, i) ->
   inc "dragmove"
   inc 'dragdist', Math.sqrt(d3.event.dx*d3.event.dx + d3.event.dy*d3.event.dy)
-myresz.on "resizestart", (d, i) ->
+bb.on "resizestart", (d, i) ->
   inc "resizestart"
   this._oldstroke_ = this.style.stroke
   this.style.stroke = '#6BD1FB'
-myresz.on "resizeend", (d, i) ->
+bb.on "resizeend", (d, i) ->
   inc "resizeend"
   this.style.stroke = this._oldstroke_
   delete this._oldstroke_
-myresz.on "resizemove", (d, i) -> inc "resizemove"
+bb.on "resizemove", (d, i) -> inc "resizemove"
 
 # Counters Firefox's weird checkbox cache.
 (d3.selectAll '#r').each -> this.value = 5
