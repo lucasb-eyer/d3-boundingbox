@@ -75,7 +75,7 @@ footer {
     <!-- I fucking hotlink to master in production. -->
     <script src=deps/d3.v3.min.js></script>
     <script src=deps/coffee-script.js></script>
-    <script src=d3.boundingbox.js></script>
+    <script src=d3.bbox.js></script>
 
     <script type="text/coffeescript">
 [W, H] = [500, 500]
@@ -99,8 +99,10 @@ rects.attr
   width: (d) -> d.w
   height: (d) -> d.h
 
-bb = d3lb.bbox()
-rects.call bb
+bb = d3lb.bbox().infect(rects)
+# Alternatively:
+#bb = d3lb.bbox()
+#rects.call bb
 
 (d3.select 'svg').on "mousemove", ->
   (document.getElementById "mouse").innerHTML = d3.mouse this

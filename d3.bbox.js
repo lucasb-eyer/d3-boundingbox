@@ -218,6 +218,11 @@ root.d3lb.bbox = function () {
         return my
     }
 
+    my.infect = function(selection) {
+        my(selection)
+        return my
+    }
+
     return my
 }
 
