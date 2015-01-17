@@ -1,9 +1,17 @@
+<!DOCTYPE html>
 <html>
 <head>
+    <meta charset=utf-8 />
+    <meta name=author content="Lucas Beyer" />
+
     <style>
 body {
     color: #585858;
     background-color: #e8e8e8;
+}
+
+h1 {
+    margin: 10px 0px;
 }
 
 svg {
@@ -25,6 +33,11 @@ line {
     stroke: red;
 }
 
+a {
+    color: #6BD1FB;
+    text-decoration: none;
+}
+
 footer {
     position: fixed;
     bottom: 0;
@@ -35,9 +48,16 @@ footer {
     background-color: #585858;
     font-size: small;
 }
+
+#credit {
+    position: absolute;
+    right: 10px;
+}
     </style>
 </head>
 <body>
+    <h1>A Demo of <code>d3lb.bbox</code> Behaviour</h1>
+
     <svg id=labels>
     </svg>
 
@@ -70,6 +90,7 @@ footer {
 
     <footer>(Debug)
       d3.mouse(): <span id=mouse></span>
+      <span id=credit>© <a href=http://lb.eyer.be>Lucas Beyer</a></span>
     </footer>
 
     <!-- I fucking hotlink to master in production. -->
