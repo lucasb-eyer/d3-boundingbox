@@ -38,7 +38,7 @@ the quick creation of browser-based interactive labeling tools.
 Usage
 =====
 
-Just like any [D3.js reusable component](http://bost.ocks.org/mike/charg),
+Just like any [D3.js reusable component](http://bost.ocks.org/mike/chart/),
 create the behaviour and call it on a collection:
 
 ```js
