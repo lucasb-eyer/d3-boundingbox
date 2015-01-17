@@ -1,5 +1,5 @@
-d3-boundingbox
-==============
+D3.js Bounding Box
+==================
 
 This is a [reusable component](http://bost.ocks.org/mike/chart/)
 for [D3.js](http://d3js.org) which can give any element having `x`, `y`,
