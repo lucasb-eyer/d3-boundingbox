@@ -21,7 +21,7 @@ Features of the library are:
 - Configurable "handle" size.
 - Callbacks for all possible situations.
 - Rock-solid behaviour: no "sticking", "losing" or "disappearing" problems.
-    - Check out [test.html](http://htmlpreview.github.io/?https://raw.githubusercontent.com/lucasb-eyer/d3-boundingbox/master/test.html)
+    - Check out [test.html](http://lucasb.eyer.be/lab/d3-boundingbox.html)
 
 The following are intentional non-features:
 
@@ -56,7 +56,7 @@ you can keep chaining calls to selection methods.
 The return value of `infect` is the boundingbox itself, so that you can keep
 chaining calls to the boundingbox's methods.
 
-Note that the [test.html](http://htmlpreview.github.io/?https://raw.githubusercontent.com/lucasb-eyer/d3-boundingbox/master/test.html)
+Note that the [test.html](http://lucasb.eyer.be/lab/d3-boundingbox.html)
 file covers almost all possible usages, so you can use it as an example.
 
 In the following, all setter methods can also be used as getters by not passing
