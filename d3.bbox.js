@@ -129,13 +129,17 @@ root.d3lb.bbox = function () {
                     return
         }
 
+        // Potentially dynamically determine the allowed space.
+        var xext = typeof xextent === "function" ? xextent.call(this, d, i) : xextent
+        var yext = typeof yextent === "function" ? yextent.call(this, d, i) : yextent
+
         // Handle moving around first, more easily.
         if(this.__resize_action__ == "M") {
             if(dirs.indexOf("x") > -1 && d3.event.dx != 0)
                 // This is so that even moving the mouse super-fast, this still "sticks" to the extent.
-                this.setAttribute("x", clamp(clamp(d3.event.x, xextent) + this.__ow__, xextent) - this.__ow__)
+                this.setAttribute("x", clamp(clamp(d3.event.x, xext) + this.__ow__, xext) - this.__ow__)
             if(dirs.indexOf("y") > -1 && d3.event.dy != 0)
-                this.setAttribute("y", clamp(clamp(d3.event.y, yextent) + this.__oh__, yextent) - this.__oh__)
+                this.setAttribute("y", clamp(clamp(d3.event.y, yext) + this.__oh__, yext) - this.__oh__)
         // Now check for all possible resizes.
         } else {
             var x = +this.getAttribute("x")
@@ -144,22 +148,22 @@ root.d3lb.bbox = function () {
             // First, check for vertical resizes,
             if(/^n/.test(this.__resize_action__)) {
                 var b = y + +this.getAttribute("height")
-                var newy = clamp(clamp(d3.event.y, yextent), [-Infinity, b-1])
+                var newy = clamp(clamp(d3.event.y, yext), [-Infinity, b-1])
                 this.setAttribute("y", newy)
                 this.setAttribute("height", b - newy)
             } else if(/^s/.test(this.__resize_action__)) {
-                var b = clamp(d3.event.y + this.__oh__, yextent)
+                var b = clamp(d3.event.y + this.__oh__, yext)
                 this.setAttribute("height", clamp(b - y, [1, Infinity]))
             }
 
             // and then for horizontal ones. Note both may happen.
             if(/w$/.test(this.__resize_action__)) {
                 var r = x + +this.getAttribute("width")
-                var newx = clamp(clamp(d3.event.x, xextent), [-Infinity, r-1])
+                var newx = clamp(clamp(d3.event.x, xext), [-Infinity, r-1])
                 this.setAttribute("x", newx)
                 this.setAttribute("width", r - newx)
             } else if(/e$/.test(this.__resize_action__)) {
-                var r = clamp(d3.event.x + this.__ow__, xextent)
+                var r = clamp(d3.event.x + this.__ow__, xext)
                 this.setAttribute("width", clamp(r - x, [1, Infinity]))
             }
         }

@@ -66,8 +66,7 @@ Imposing a Constraint
 ---------------------
 
 You can impose constraints, i.e. min/max x- and y-coordinates within which
-the element should stay. For example, you can restrict a head's bounding-box
-to stay within the corresonding full-body bounding-box:
+the element should stay. You can either pass a pair of constant values:
 
 ```js
 var bb = d3lb.bbox()
@@ -80,9 +79,21 @@ d3lb.bbox().infect(d3.selectAll("rect.head"))
     .yextent([10, +Infinity])
 ```
 
-Notice how you can use `Infinity` to stay unbounded in some direction.
+or a function which will be called with the element's datum and index as
+arguments and `this` bound to the element whenever a resize is attempted
+and should return two values: the minimum and the maximum.
+For example, you can restrict a head's bounding-box to stay within the
+corresonding full-body bounding-box:
+
+```js
+d3lb.bbox().infect(d3.selectAll("rect.head"))
+    .xextent(function(d, i) { return [d.body.left, d.body.right]; }
+    .yextent(function(d, i) { return [d.body.top, d.body.bottom]; }
+```
 
 To get back to not having any constraints, call `{x,y}extent(false)`.
+
+Also notice how you can use `Infinity` to stay unbounded in some direction.
 
 Selecting Interactions
 ----------------------
