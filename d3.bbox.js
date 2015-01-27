@@ -223,7 +223,13 @@ root.d3lb.bbox = function () {
     }
 
     my.infect = function(selection) {
-        my(selection)
+        selection.call(my)
+        return my
+    }
+
+    my.disinfect = function(selection) {
+        selection.on(".drag", null)
+        selection.on(".lbbbox", null)
         return my
     }
 

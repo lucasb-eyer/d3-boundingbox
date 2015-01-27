@@ -59,6 +59,9 @@ chaining calls to the boundingbox's methods.
 Note that the [test.html](http://lucasb.eyer.be/lab/d3-boundingbox.html)
 file covers almost all possible usages, so you can use it as an example.
 
+Also note that there's a `disinfect` function which can be used to remove
+all registered event handlers from the element.
+
 In the following, all setter methods can also be used as getters by not passing
 in any value parameter.
 
