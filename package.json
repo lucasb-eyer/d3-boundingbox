@@ -1,0 +1,22 @@
+{
+  "name": "d3-boundingbox",
+  "description": "Easy \"bounding-box\" type of interaction for d3js elements",
+  "version": "1.0",
+  "maintainers": [
+    {
+      "name": "Lucas Beyer",
+      "email": "lucasb.eyer.be@gmail.com",
+      "web": "http://lucasb.eyer.be"
+    }
+  ],
+  "demos": [
+    "http://lucasb.eyer.be/lab/d3-boundingbox.html",
+    "test.html"
+  ],
+  "licenses": [
+    {
+      "name": "MIT",
+      "url": "https://github.com/lucasb-eyer/d3-boundingbox/blob/master/LICENSE"
+    }
+  ]
+}
