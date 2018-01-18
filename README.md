@@ -35,6 +35,14 @@ The following are intentional non-features:
 This library is part of a larger collection of D3.js utilities for supporting
 the quick creation of browser-based interactive labeling tools.
 
+Installation
+============
+
+You can install d3-boundingbox using npm by installing from this git repo:
+```
+npm install https://github.com/lucasb-eyer/d3-boundingbox.git
+```
+
 Usage
 =====
 
